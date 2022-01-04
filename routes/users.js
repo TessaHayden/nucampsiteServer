@@ -2,12 +2,21 @@ const express = require("express");
 const passport = require("passport");
 const User = require("../models/user");
 const authenticate = require("../authenticate");
+const user = require("../models/user");
 
 const router = express.Router();
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
-  res.send("respond with a resource");
+  if (req.user.admin) {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    res.json(user);
+  } else {
+    const err = new Error("You are not authorized to perform this operation!");
+    err.status = 403;
+    return next(err);
+  }
 });
 
 router.post("/signup", (req, res) => {
